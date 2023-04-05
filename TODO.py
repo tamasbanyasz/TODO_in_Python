@@ -23,12 +23,15 @@ class DataProcessing:
 
     # after fist time we wrote then we could update the text of the day in stored dictionary because its already loaded and stored
     def overwrite_text_of_the_day(self, text, day_name):
-        for day in self.list_of_stored_days:
-            day[day_name] = text
+        if self.list_of_stored_days:
+            for day in self.list_of_stored_days:
+                day[day_name] = text
 
     def write_each_rows_into_csv(self, csv_writer):  # write the updated stored csv datas into csv
-        for days in self.list_of_stored_days:
-            csv_writer.writerow(days)
+        if self.list_of_stored_days:
+            for days in self.list_of_stored_days:
+                print(days)
+                csv_writer.writerow(days)
 
     def write_to_csv_file(self, text, day):  # writing method
 
@@ -37,12 +40,10 @@ class DataProcessing:
         with open("todo_list.csv", "w+") as csv_file:
             csv_writer = csv.DictWriter(csv_file, fieldnames=self.DAYS)
             csv_writer.writeheader()
-            self.write_into_csv_at_first_time(csv_writer, day, text)
-            self.write_each_rows_into_csv(csv_writer)
-
-        # now we can see the first added text so we don't need to close the app and open it again
-        self.read_from_csv_file()
-        # but maybe there is another best way to handle it
+            if day:
+                self.write_into_csv_at_first_time(csv_writer, day, text)
+                self.write_each_rows_into_csv(csv_writer)
+                return True
 
     def read_from_csv_file(self):  # read the csv file
         with open("todo_list.csv", "r") as csv_file:
@@ -69,8 +70,11 @@ class SetInterface:
 
     def get_text_from_textbox(self):
         # take the text and the selected day to writing method
-        self.class_data_handling.write_to_csv_file(self.textbox.get('0.0', 'end'), self.radio_str.get())
-        self.current_day_label.configure(text=f"Added to {self.radio_str.get()}")  # change the textbox label if we added a new text
+        if self.class_data_handling.write_to_csv_file(self.textbox.get('0.0', 'end'), self.radio_str.get()):
+            # now we can see the first added text so we don't need to close the app and open it again
+            self.class_data_handling.read_from_csv_file()
+            # but maybe there is another best way to handle it
+            self.current_day_label.configure(text=f"Added to {self.radio_str.get()}")  # change the textbox label if we added a new text
 
     def insert_the_text_from_radiobutton(self):
         for day in self.class_data_handling.list_of_stored_days:
@@ -113,13 +117,14 @@ class InterfaceOfTODO:
                                               font=('Arial', 18), corner_radius=4)
 
         # TextBox
-        self.textbox = ctk.CTkTextbox(master=self.window, height=433, width=270, font=('Times', 20))
+        self.textbox = ctk.CTkTextbox(master=self.window, height=433, width=270, font=('Times', 20), state='disabled')
 
         # Set Interface
         self.set_interface = SetInterface(self.textbox, self.str, self.current_day_label)
 
         # Buttons
         self.radio_buttons()
+
         self.add_button()
 
         # widget places
@@ -145,6 +150,7 @@ class InterfaceOfTODO:
         submit_button.place(x=75, y=480)
 
     def show_day(self):
+        self.textbox.configure(state='normal')
         self.set_interface.display_text_by_selected_day()
 
 
