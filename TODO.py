@@ -34,13 +34,12 @@ class DataProcessing:
                 csv_writer.writerow(days)
 
     def write_to_csv_file(self, text, day):  # writing method
+        if day:
+            self.overwrite_text_of_the_day(text, day)
 
-        self.overwrite_text_of_the_day(text, day)
-
-        with open("todo_list.csv", "w+") as csv_file:
-            csv_writer = csv.DictWriter(csv_file, fieldnames=self.DAYS)
-            csv_writer.writeheader()
-            if day:
+            with open("todo_list.csv", "w+") as csv_file:
+                csv_writer = csv.DictWriter(csv_file, fieldnames=self.DAYS)
+                csv_writer.writeheader()
                 self.write_into_csv_at_first_time(csv_writer, day, text)
                 self.write_each_rows_into_csv(csv_writer)
                 return True
