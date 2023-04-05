@@ -3,7 +3,7 @@ import os.path
 import csv
 
 
-class Store:
+class DataProcessing:
     def __init__(self):
         self.DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         self.list_of_stored_days = []  # here do store the loaded days to updating
@@ -52,11 +52,11 @@ class Store:
 
 class SetInterface:
     def __init__(self, textbox, radio_str, current_day_label):
-        self.class_store = Store()
-        self.class_store.csv_file_is_exist()  # check the file is exist
-        self.class_store.read_from_csv_file()  # then read from the file
+        self.class_data_handling = DataProcessing()
+        self.class_data_handling.csv_file_is_exist()  # check the file is exist
+        self.class_data_handling.read_from_csv_file()  # then read from the file
 
-        for days in self.class_store.list_of_stored_days:  # test print
+        for days in self.class_data_handling.list_of_stored_days:  # test print
             print(days)
 
         self.textbox = textbox
@@ -69,11 +69,11 @@ class SetInterface:
 
     def get_text_from_textbox(self):
         # take the text and the selected day to writing method
-        self.class_store.write_to_csv_file(self.textbox.get('0.0', 'end'), self.radio_str.get())
+        self.class_data_handling.write_to_csv_file(self.textbox.get('0.0', 'end'), self.radio_str.get())
         self.current_day_label.configure(text=f"Added to {self.radio_str.get()}")  # change the textbox label if we added a new text
 
     def insert_the_text_from_radiobutton(self):
-        for day in self.class_store.list_of_stored_days:
+        for day in self.class_data_handling.list_of_stored_days:
             self.textbox.insert("0.0", day[self.radio_str.get()])  # insert the text into the textbox from selected day
 
     def display_text_by_selected_day(self):  # show the text from choosed radiobutton
@@ -132,7 +132,7 @@ class InterfaceOfTODO:
 
     def radio_buttons(self):  # create the seven radiobutton
         value_of_axis_y = 50
-        for day in self.set_interface.class_store.DAYS:
+        for day in self.set_interface.class_data_handling.DAYS:
             ctk.CTkRadioButton(master=self.frame, text=day, variable=self.str, value=day,
                                corner_radius=10, command=self.show_day).place(x=30, y=value_of_axis_y)
 
